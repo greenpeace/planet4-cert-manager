@@ -25,8 +25,6 @@ init:
 	helm repo add jetstack https://charts.jetstack.io
 	helm repo update
 
-
-
 dev: lint init
 ifndef CI
 	$(error Please commit and push, this is intended to be run in a CI environment)
@@ -35,7 +33,7 @@ endif
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
 
 #Install the CustomResourceDefinition resources first separately
-  ./create_crds.sh
+	./create_crds.sh
 
 #Check if exists or create ClusterIssuers
 	./create_clusterissuer.sh

@@ -9,7 +9,7 @@ then
   echo "Stage Cluster Issuer already exists"
 else
   echo "Stage Cluster Issuer does not exist, creating it now"
-  kubectl create -f LetsEncrypt-staging.yaml
+  kubectl create -f letsencrypt-staging.yaml
 fi
 
 if (( CISSUER_PROD_COUNT > 0 ))
@@ -17,5 +17,5 @@ then
   echo "Prod Cluster Issuer already exists"
 else
   echo "Prod Cluster Issuer does not exist, creating it now"
-  kubectl create -f LetsEncrypt-prod.yaml
+  kubectl create -f letsencrypt-prod.yaml
 fi
