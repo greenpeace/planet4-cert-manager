@@ -46,9 +46,6 @@ endif
 		--version $(CHART_VERSION) \
 		-f values.yaml \
 		$(CHART_NAME) \
-		--set ingressShim.defaultIssuerName=letsencrypt-staging \
-		--set ingressShim.defaultIssuerKind=ClusterIssuer \
-		--set ingressShim.defaultIssuerGroup=cert-manager.io \
 	$(MAKE) history
 
 prod: lint init
@@ -72,9 +69,6 @@ endif
 		--version $(CHART_VERSION) \
 		-f values.yaml \
 		$(CHART_NAME) \
-		--set ingressShim.defaultIssuerName=letsencrypt-staging \
-		--set ingressShim.defaultIssuerKind=ClusterIssuer \
-		--set ingressShim.defaultIssuerGroup=cert-manager.io \
 	$(MAKE) history
 
 destroy:
