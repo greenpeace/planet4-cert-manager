@@ -52,10 +52,8 @@ endif
 	gcloud config set project $(PROD_PROJECT)
 	gcloud container clusters get-credentials $(PROD_PROJECT) --zone $(PROD_ZONE) --project $(PROD_PROJECT)
 
-#Install the CustomResourceDefinition resources first separately.
-#https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm
-#Kubernetes 1.15+
-  -kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager.crds.yaml
+#Install the CustomResourceDefinition resources first separately
+		./create_crds.sh
 
 #Check if exists or create ClusterIssuers
 	./create_clusterissuer.sh
