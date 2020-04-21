@@ -25,6 +25,8 @@ init:
 	helm repo add jetstack https://charts.jetstack.io
 	helm repo update
 
+
+
 dev: lint init
 ifndef CI
 	$(error Please commit and push, this is intended to be run in a CI environment)
@@ -32,15 +34,12 @@ endif
 	gcloud config set project $(DEV_PROJECT)
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
 
-#Install the CustomResourceDefinition resources first separately.
-#https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm
-#Kubernetes 1.15+
-  -kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager.crds.yaml
+#Install the CustomResourceDefinition resources first separately
+  ./create_crds.sh
 
 #Check if exists or create ClusterIssuers
 	./create_clusterissuer.sh
 
-	-kubectl create namespace $(NAMESPACE)
 	helm upgrade --install --force --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
