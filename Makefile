@@ -42,7 +42,7 @@ endif
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
-		$(CHART_NAME) \
+		$(CHART_NAME)
 	$(MAKE) history
 
 prod: lint init
@@ -63,7 +63,7 @@ endif
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
-		$(CHART_NAME) \
+		$(CHART_NAME) 
 	$(MAKE) history
 
 destroy:
