@@ -35,8 +35,6 @@ endif
 #Install the CustomResourceDefinition resources first separately
 	./create_crds.sh
 
-#Check if exists or create ClusterIssuers
-	./create_clusterissuer.sh
 
 	helm upgrade --install --force --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
@@ -44,6 +42,9 @@ endif
 		-f values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
+
+#Check if exists or create ClusterIssuers
+	./create_clusterissuer.sh
 
 prod: lint init
 ifndef CI
@@ -55,16 +56,16 @@ endif
 #Install the CustomResourceDefinition resources first separately
 		./create_crds.sh
 
-#Check if exists or create ClusterIssuers
-	./create_clusterissuer.sh
-
 	-kubectl create namespace $(NAMESPACE)
 	helm upgrade --install --force --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
-		$(CHART_NAME) 
+		$(CHART_NAME)
 	$(MAKE) history
+
+#Check if exists or create ClusterIssuers
+	./create_clusterissuer.sh
 
 destroy:
 	helm delete --purge $(RELEASE)
