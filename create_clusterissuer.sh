@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CISSUER_PROD_COUNT=$(kubectl get ClusterIssuer | grep -c letsencrypt-prod)
-CISSUER_STAGE_COUNT=$(kubectl get ClusterIssuer | grep -c letsencrypt-staging)
+CISSUER_STAGE=$(kubectl get ClusterIssuer | grep letsencrypt-stage > stage.txt 2>/dev/null)
+CISSUER_PROD=$(kubectl get ClusterIssuer | grep letsencrypt-prod > prod.txt 2>/dev/null)
 
-if (( CISSUER_STAGE_COUNT > 0 ))
-then
-  echo "Stage Cluster Issuer already exists"
+echo "$CISSUER_STAGE"
+if [ -s stage.txt ]
+ then
+ echo "Stage Cluster Issuer already exists"
+ rm stage.txt
 else
-  echo "Stage Cluster Issuer does not exist, creating it now"
-  kubectl create -f letsencrypt-staging.yaml
+ echo "Stage Cluster Issuer does not exist, creating it now"
+#  kubectl create -f letsencrypt-staging.yaml
 fi
 
-if (( CISSUER_PROD_COUNT > 0 ))
+echo "$CISSUER_PROD"
+if [ -s prod.txt ]
 then
   echo "Prod Cluster Issuer already exists"
+  rm prod.txt
 else
   echo "Prod Cluster Issuer does not exist, creating it now"
-  kubectl create -f letsencrypt-prod.yaml
+#  kubectl create -f letsencrypt-prod.yaml
 fi
