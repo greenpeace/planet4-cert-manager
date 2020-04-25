@@ -35,7 +35,7 @@ endif
 #Install the CustomResourceDefinition resources first separately
 	./create_crds.sh
 
-
+	-kubectl label namespace $(NAMESPACE) certmanager.k8s.io/disable-validation=true
 	helm upgrade --install --force --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
@@ -56,7 +56,7 @@ endif
 #Install the CustomResourceDefinition resources first separately
 		./create_crds.sh
 
-	-kubectl create namespace $(NAMESPACE)
+	-kubectl label namespace $(NAMESPACE) certmanager.k8s.io/disable-validation=true
 	helm upgrade --install --force --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
