@@ -1,0 +1,6 @@
+---
+global:
+  rbac:
+    create: true
+  leaderElection:
+    namespace: cert-manager
