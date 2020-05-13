@@ -4,7 +4,10 @@ RELEASE := cert-manager
 NAMESPACE := cert-manager
 
 CHART_NAME := jetstack/cert-manager
-CHART_VERSION ?= 0.14.1
+CHART_VERSION ?= 0.14.3
+#If changing chart version here, also update create_crds.sh
+#Unless your upgrading to 0.15.x where you can create creds
+#via helm.
 
 DEV_CLUSTER ?= p4-development
 DEV_PROJECT ?= planet-4-151612
@@ -43,8 +46,8 @@ endif
 		$(CHART_NAME)
 	$(MAKE) history
 
-#Check if exists or create ClusterIssuers
-	./create_clusterissuer.sh
+#Create ClusterIssuers
+#	./create_clusterissuer.sh
 
 prod: lint init
 ifndef CI
@@ -64,8 +67,8 @@ endif
 		$(CHART_NAME)
 	$(MAKE) history
 
-#Check if exists or create ClusterIssuers
-	./create_clusterissuer.sh
+#Create ClusterIssuers
+#	./create_clusterissuer.sh
 
 destroy:
 	helm delete --purge $(RELEASE)
