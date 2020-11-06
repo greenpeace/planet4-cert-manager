@@ -72,7 +72,8 @@ workflows:
   version: 2
   commit:
     jobs:
-      - lint
+      - lint:
+          context: org-global
       - dev:
           context: org-global
           requires:
