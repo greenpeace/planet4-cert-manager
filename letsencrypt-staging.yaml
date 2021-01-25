@@ -2,7 +2,7 @@
 # Use this command to deploy
 # kubectl create -f LetsEncrypt-staging.yaml
 apiVersion: cert-manager.io/v1alpha2
-kind: ClusterIssuer
+kind: Issuer
 metadata:
   name: letsencrypt-staging
 spec:
