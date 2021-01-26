@@ -1,4 +1,4 @@
-# SHELL := /bin/bash
+SHELL := /bin/bash
 
 RELEASE := cert-manager
 NAMESPACE := cert-manager
@@ -19,59 +19,81 @@ PROD_ZONE ?= us-central1-a
 
 .DEFAULT_TARGET: status
 
-lint:
-	@find . -type f -name '*.yml' | xargs yamllint
-	@find . -type f -name '*.yaml' | xargs yamllint
+lint: lint-yaml lint-ci
 
+lint-yaml:
+		@find . -type f -name '*.yml' | xargs yamllint
+		@find . -type f -name '*.yaml' | xargs yamllint
+
+lint-ci:
+		@circleci config validate
+
+# Helm Initialisation
 init:
-	helm init --client-only
-	helm repo add jetstack https://charts.jetstack.io
-	helm repo update
+	helm3 repo add jetstack https://charts.jetstack.io
+	helm3 repo update
 
+# Helm Deploy to Development
 dev: lint init
 ifndef CI
 	$(error Please commit and push, this is intended to be run in a CI environment)
 endif
 	gcloud config set project $(DEV_PROJECT)
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
-
-#Install the CustomResourceDefinition resources first separately
+	-kubectl create namespace $(NAMESPACE)
 	./create_crds.sh
-
-	-kubectl label namespace $(NAMESPACE) certmanager.k8s.io/disable-validation=true
-	helm upgrade --install --force --wait $(RELEASE) \
+	helm3 upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
 
-#Create ClusterIssuers
-#	./create_clusterissuer.sh
-
+# Helm Deploy to Production
 prod: lint init
 ifndef CI
 	$(error Please commit and push, this is intended to be run in a CI environment)
 endif
 	gcloud config set project $(PROD_PROJECT)
 	gcloud container clusters get-credentials $(PROD_PROJECT) --zone $(PROD_ZONE) --project $(PROD_PROJECT)
-
-#Install the CustomResourceDefinition resources first separately
-		./create_crds.sh
-
-	-kubectl label namespace $(NAMESPACE) certmanager.k8s.io/disable-validation=true
-	helm upgrade --install --force --wait $(RELEASE) \
+	-kubectl create namespace $(NAMESPACE)
+	./create_crds.sh
+	helm3 upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
 
-#Create ClusterIssuers
-#	./create_clusterissuer.sh
+# Helm status
+status:
+	helm3 status $(CHART_NAME) -n $(NAMESPACE)
 
-destroy:
-	helm delete --purge $(RELEASE)
+# Display user values followed by all values
+values:
+	helm3 get values $(CHART_NAME) -n $(NAMESPACE)
+	helm3 get values $(CHART_NAME) -n $(NAMESPACE) -a
 
+# Display helm history
 history:
-	helm history $(RELEASE) --max=5
+	helm3 history $(RELEASE) -n $(NAMESPACE) --max=5
+
+# List all user created certs, issuers etc.
+list_data:
+	kubectl get Issuers,ClusterIssuers,Certificates,CertificateRequests,Orders,Challenges --all-namespaces
+
+# Create staging and prod issuers in cert-manager namespace
+issuers:
+	./create_issuer.sh
+
+# Delete a release when you intend reinstalling it to keep history
+uninstall:
+	helm3 uninstall $(RELEASE) -n $(NAMESPACE) --keep-history
+
+# Completely remove helm install, config data, persistent volumes etc.
+# Before running this ensure you have deleted any other related config
+destroy:
+	@echo -n "Ensure you have run and deleted "make list_data" before deleting this deployment "
+	@echo -n "You are about to ** DELETE DATA **, enter y if your sure ? [y/N] " && read ans && [ $${ans:-N} = y ]
+	helm3 uninstall $(RELEASE) -n $(NAMESPACE)
+	./delete_crds.sh
