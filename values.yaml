@@ -6,4 +6,4 @@ global:
     namespace: cert-manager
 prometheus:
   servicemonitor:
-    enabled: true 
+    enabled: true
