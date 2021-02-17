@@ -4,3 +4,6 @@ global:
     create: true
   leaderElection:
     namespace: cert-manager
+prometheus:
+  servicemonitor:
+    enabled: true
