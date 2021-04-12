@@ -6,3 +6,5 @@ set -euo pipefail
 
   kubectl apply -f letsencrypt-staging.yaml
   kubectl apply -f letsencrypt-prod.yaml
+  kubectl apply -f letsencrypt-staging-cluster.yaml
+  kubectl apply -f letsencrypt-prod-cluster.yaml
