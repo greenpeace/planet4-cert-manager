@@ -1,10 +1,11 @@
 ---
 # Use this command to deploy
-# kubectl create -f LetsEncrypt-staging.yaml
+# kubectl create -f LetsEncrypt-staging-redirect.yaml
 apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
   name: letsencrypt-staging
+  namespace: global-redirects
 spec:
   acme:
     # The ACME server URL
@@ -18,4 +19,4 @@ spec:
     solvers:
       - http01:
           ingress:
-            class: nginx
+            class: redirects-nginx
