@@ -4,3 +4,8 @@ global:
     create: true
   leaderElection:
     namespace: cert-manager
+prometheus:
+  servicemonitor:
+    enabled: true
+    labels:
+      release: prometheus-stack
