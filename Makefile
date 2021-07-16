@@ -34,7 +34,7 @@ init:
 	helm3 repo update
 
 # Helm Deploy to Development
-dev: lint init
+dev: lint init config-secrets
 ifndef CI
 	$(error Please commit and push, this is intended to be run in a CI environment)
 endif
