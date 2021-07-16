@@ -1,0 +1,20 @@
+---
+# Use this command to deploy
+# kubectl create -f LetsEncrypt-prod.yaml
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod-dns
+spec:
+  acme:
+    email: postmaster@greenpeace.org
+    privateKeySecretRef:
+      name: letsencrypt-dns-prod
+    server: 'https://acme-v02.api.letsencrypt.org/directory'
+    solvers:
+      - dns01:
+          clouddns:
+            project: global-it-infrastructure
+            serviceAccountSecretRef:
+              key: global-it-infrastructure.json
+              name: clouddns-dns01-solver-svc-acct
