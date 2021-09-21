@@ -34,7 +34,7 @@ init:
 	helm3 repo update
 
 # Helm Deploy to Development
-dev: lint init
+dev: lint init config-secrets
 ifndef CI
 	$(error Please commit and push, this is intended to be run in a CI environment)
 endif
@@ -42,6 +42,7 @@ endif
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
 	-kubectl create namespace $(NAMESPACE)
 	./create_crds.sh
+	kubectl apply -f letsencrypt-secret.yaml
 	./create_issuer.sh
 	helm3 upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
@@ -49,9 +50,10 @@ endif
 		-f values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
+	rm -f letsencrypt-secret.yaml
 
 # Helm Deploy to Production
-prod: lint init
+prod: lint init config-secrets
 ifndef CI
 	$(error Please commit and push, this is intended to be run in a CI environment)
 endif
@@ -59,6 +61,7 @@ endif
 	gcloud container clusters get-credentials $(PROD_PROJECT) --zone $(PROD_ZONE) --project $(PROD_PROJECT)
 	-kubectl create namespace $(NAMESPACE)
 	./create_crds.sh
+	kubectl apply -f letsencrypt-secret.yaml
 	./create_issuer.sh
 	helm3 upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
@@ -66,6 +69,7 @@ endif
 		-f values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
+	rm -f letsencrypt-secret.yaml
 
 # Helm status
 status:
@@ -99,3 +103,7 @@ destroy:
 	@echo -n "You are about to ** DELETE DATA **, enter y if your sure ? [y/N] " && read ans && [ $${ans:-N} = y ]
 	helm3 uninstall $(RELEASE) -n $(NAMESPACE)
 	./delete_crds.sh
+
+config-secrets:
+	@echo -n "Appending Thanos Service Account credentials from environment to objstore.yaml"
+	perl -p -i template.pl < ./letsencrypt-secret.yaml.tpl > letsencrypt-secret.yaml
