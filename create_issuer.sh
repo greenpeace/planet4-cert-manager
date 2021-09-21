@@ -10,3 +10,4 @@ set -euo pipefail
   kubectl apply -f letsencrypt-prod-cluster.yaml
   kubectl apply -f letsencrypt-staging-cluster-dns.yaml
   kubectl apply -f letsencrypt-prod-cluster-dns.yaml
+  
