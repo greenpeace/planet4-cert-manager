@@ -50,6 +50,7 @@ endif
 		-f values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
+	rm -f letsencrypt-secret.yaml
 
 # Helm Deploy to Production
 prod: lint init config-secrets
@@ -68,6 +69,7 @@ endif
 		-f values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
+	rm -f letsencrypt-secret.yaml
 
 # Helm status
 status:
