@@ -13,7 +13,7 @@ spec:
     server: "https://acme-v02.api.letsencrypt.org/directory"
     solvers:
       - dns01:
-          clouddns:
+          cloudDNS:
             project: global-it-infrastructure
             serviceAccountSecretRef:
               key: global-it-infrastructure.json
