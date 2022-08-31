@@ -4,7 +4,7 @@ RELEASE := cert-manager
 NAMESPACE := cert-manager
 
 CHART_NAME := jetstack/cert-manager
-CHART_VERSION ?= 1.7.3
+CHART_VERSION ?= 1.9.1
 #If changing chart version here, also update create_crds.sh
 #Unless your upgrading to 0.15.x where you can create creds
 #via helm.
