@@ -4,5 +4,5 @@ set -euo pipefail
 #Install the CustomResourceDefinition resources first separately.
 #https://cert-manager.io/docs/installation/kubernetes/#installing-with-helm
 #Kubernetes 1.15+
-  kubectl create --validate=false \
+  kubectl replace --validate=false \
 	 -f https://github.com/cert-manager/cert-manager/releases/download/v1.9.1/cert-manager.crds.yaml
