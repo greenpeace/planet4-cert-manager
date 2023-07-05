@@ -26,6 +26,8 @@ lint-yaml:
 		find . -type f -name '*.yaml' | xargs yamllint
 
 lint-ci:
+		circleci version
+		circleci --help
 		circleci config validate
 
 # Helm Initialisation
