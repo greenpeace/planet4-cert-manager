@@ -19,16 +19,11 @@ PROD_ZONE ?= us-central1-a
 
 .DEFAULT_TARGET: status
 
-lint: lint-yaml lint-ci
+lint: lint-yaml
 
 lint-yaml:
 		find . -type f -name '*.yml' | xargs yamllint
 		find . -type f -name '*.yaml' | xargs yamllint
-
-lint-ci:
-		circleci version
-		circleci --help
-		circleci config validate
 
 # Helm Initialisation
 init:
