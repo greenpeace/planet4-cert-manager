@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: vault-issuer
+  name: vault-metric
   namespace: cert-manager
 spec:
   vault:
