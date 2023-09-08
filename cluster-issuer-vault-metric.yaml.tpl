@@ -3,7 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: vault-issuer
-  namespace: sandbox
+  namespace: cert-manager
 spec:
   vault:
     path: >-
