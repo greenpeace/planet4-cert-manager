@@ -44,7 +44,7 @@ endif
 	
 	kubectl apply -f secret-vault-issuer-token.yaml
 	kubectl apply -f service-account-vault.yaml
-	kubeclt apply -f cluster-issuer-vault-metric.yaml
+	kubectl apply -f cluster-issuer-vault-metric.yaml
 
 	helm3 upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
