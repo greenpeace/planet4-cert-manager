@@ -41,6 +41,11 @@ endif
 	./create_crds.sh
 	kubectl apply -f letsencrypt-secret.yaml
 	./create_issuer.sh
+	
+	kubectl apply -f secret-vault-issuer-token.yaml
+	kubectl apply -f service-account-vault.yaml
+	kubeclt apply -f cluster-issuer-vault-metric.yaml
+
 	helm3 upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
@@ -104,3 +109,5 @@ destroy:
 config-secrets:
 	@echo -n "Appending Thanos Service Account credentials from environment to objstore.yaml"
 	perl -p -i template.pl < ./letsencrypt-secret.yaml.tpl > letsencrypt-secret.yaml
+	@echo -n "Vault Metric CluserIssuer"
+	perl -p -i template.pl < ./cluster-issuer-vault-metric.yaml.tpl > cluster-issuer-vault-metric.yaml
