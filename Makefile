@@ -4,7 +4,7 @@ RELEASE := cert-manager
 NAMESPACE := cert-manager
 
 CHART_NAME := jetstack/cert-manager
-CHART_VERSION ?= 1.9.1
+CHART_VERSION ?= 1.12.4
 #If changing chart version here, also update create_crds.sh
 #Unless your upgrading to 0.15.x where you can create creds
 #via helm.
@@ -19,14 +19,11 @@ PROD_ZONE ?= us-central1-a
 
 .DEFAULT_TARGET: status
 
-lint: lint-yaml lint-ci
+lint: lint-yaml
 
 lint-yaml:
-		@find . -type f -name '*.yml' | xargs yamllint
-		@find . -type f -name '*.yaml' | xargs yamllint
-
-lint-ci:
-		@circleci config validate
+		find . -type f -name '*.yml' | xargs yamllint
+		find . -type f -name '*.yaml' | xargs yamllint
 
 # Helm Initialisation
 init:
@@ -44,6 +41,11 @@ endif
 	./create_crds.sh
 	kubectl apply -f letsencrypt-secret.yaml
 	./create_issuer.sh
+	
+	kubectl apply -f secret-vault-issuer-token.yaml
+	kubectl apply -f service-account-vault.yaml
+	kubectl apply -f cluster-issuer-vault-metric.yaml
+
 	helm3 upgrade --install --wait $(RELEASE) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
@@ -107,3 +109,5 @@ destroy:
 config-secrets:
 	@echo -n "Appending Thanos Service Account credentials from environment to objstore.yaml"
 	perl -p -i template.pl < ./letsencrypt-secret.yaml.tpl > letsencrypt-secret.yaml
+	@echo -n "Vault Metric CluserIssuer"
+	perl -p -i template.pl < ./cluster-issuer-vault-metric.yaml.tpl > cluster-issuer-vault-metric.yaml
