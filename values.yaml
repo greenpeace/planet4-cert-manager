@@ -9,3 +9,4 @@ prometheus:
     enabled: true
     labels:
       release: prometheus-stack
+replicaCount: 2
